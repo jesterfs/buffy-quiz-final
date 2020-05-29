@@ -3,6 +3,7 @@
 body {
   background-color: black;
   color: red;
+  font-size: 30px;
 }
 
 
@@ -10,18 +11,44 @@ body {
 h1 {
   text-align: center;
   font-family: buffied;
-  font-size: 40px;
+  font-size: 60px;
   color: red;
 }
 
-media all and (min-width: 800px){
+h2 {
+  font-size: 50px;
+}
+
+h3 {
+  font-size: 40px;
+}
+@media all and (min-width: 800px){
   h1 {
     font-size: 60px;
   }
+  h2 {
+    font-size: 30px;
+  }
+  body {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
 }
+
+p {
+  font-size: 20px;
+}
+
+
+
+
 
 input {
   margin-top: 10px;
+  font-size: 2å0px;
 }
 
 img {
@@ -42,7 +69,7 @@ img {
  align-items: center;
 }
 
-@media all and (min-width: 800px) {
+@media all and (min-width: 1000px) {
   .group {
     flex-direction: row;
   }
@@ -59,14 +86,10 @@ img {
 }
 
 .actualquiz {
-  padding-left: 10px;
+  padding-left: 100px;
 }
 
-@media and all (min-width: 800px) {
-  .actualquiz {
-    padding-left: 0;
-  }
-}
+
 
 
 a {
@@ -80,4 +103,8 @@ button {
 
 .partialResult {
   margin-left: 5px;
+}
+
+.submitbutton {
+  background-color: white;
 }
