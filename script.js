@@ -60,9 +60,9 @@ function findCurrentChoices(){
   for (i = 0; i < questions[currentIndex].choices.length; i++) {
     let choice = questions[currentIndex].choices[i]
     if (i === 0) {  
-      choicesWithHtml.push('<label for="' + i +'"><input type="radio" name="' + currentIndex + '" value="' + choice + '" required id="' + i + '">' + choice + '</label><br>');
+      choicesWithHtml.push('<label for="' + i +'"><input tabindex="' + (i + 1) + '" type="radio" name="' + currentIndex + '" value="' + choice + '" required id="' + i + '">' + choice + '</label><br>');
     } else {  
-      choicesWithHtml.push('<label for="' + i + '"><input id="'+ i + '" type="radio" name="' + currentIndex + '" value="' + choice + '">' + choice + '</label><br>');
+      choicesWithHtml.push('<label for="' + i + '"><input tabindex="' + (i + 1) + '" id="'+ i + '" type="radio" name="' + currentIndex + '" value="' + choice + '">' + choice + '</label><br>');
     }
   }
   return choicesWithHtml;
@@ -75,10 +75,12 @@ function removeCommas(){
   return withoutCommas.join(' ');
 }
 
-
+function disableSubmit(){
+  document.getElementById("submitBtn").disabled = true;
+}
 
 function tallyCorrectAnswers(){
-  $('submitbutton').attr('disabled' , 'disabled');
+  disableSubmit();
   let a = questions[currentIndex - 1].correctAnswer;
   let value = $("input[name='" + (currentIndex-1) + "']:checked").val(); 
   // let value2 = $("input[name='2']:checked").val();
@@ -100,59 +102,86 @@ function tallyCorrectAnswers(){
   // console.log (a);
 }
 
+function renderSubmitBtn() {
+  let submitBtn='';
+  
+  if (currentIndex === 0) {
+    submitBtn = '<input tabindex="1" id="submitBtn" class="submitbutton" type="submit" value="Start the Quiz!">' ;
+  } else if (currentIndex > 5){
+    submitBtn = '<a tabindex="1" href="index.html"><button type="button">Start Over</button></a>' ;
+  } else {
+    submitBtn = '<input tabindex="5" id="submitBtn" class="submitbutton" type="submit" value="Submit">' ;
+  }  
 
+
+  return submitBtn;
+}
+
+function renderHeading() {
+  let heading = ' ';
+  if (currentIndex === 0){
+    heading = 'Are You a Slayer Superfan?'
+  } else if (currentIndex > 5) {
+    heading = 'You Made It!'
+  } else {
+    heading = "Question " + currentIndex
+  }
+
+  return heading;
+}
+
+function renderScoreZone(){
+  let scoreText = ' ';
+  if (currentIndex > 1 && currentIndex < 7) {
+    scoreText = `Current Score: ` + correctAnswers + ` out of 5` 
+  } else if (currentIndex === 1) {
+    scoreText = `Current Score:`
+  }
+  return scoreText
+}
+
+function renderAnswerText(){
+  let answers = ' ';
+  if (currentIndex > 5) {
+    answers = correctAnswers + " out of 5<br>"
+  } else {
+    answers = removeCommas();
+  }
+  return answers
+}
 
 // puts the content on the page and adds a counter to currentIndex
 function renderPage() {
   // tallyCorrectAnswers();
   let text = findCurrentQuestion();
   // console.log(text);
-  let answers = removeCommas();
+  let answers = renderAnswerText();
   let image = findCurrentImage();
-  let submitBtn=''
-  
-  if (currentIndex === 0) {
-    submitBtn = '<input class="submitbutton" type="submit" value="Start the Quiz!">' ;
-  } else if (currentIndex > 5){
-    submitBtn = '<a href="index.html"><button type="button">Start Over</button></a>' ;
-  } else {
-    submitBtn = '<input class="submitbutton" type="submit" value="Submit">' ;
-  }  
-  if (currentIndex===0) {
-    $('#questionheading').text("Are you a Slayer Superfan?")
-  } else if (currentIndex > 5) {
-    $('#questionheading').text("You made it!")
-  } else {
-    $('#questionheading').text('Question '+ currentIndex)
-  }
+  let submitBtn = renderSubmitBtn();
+  let heading = renderHeading();
+  let scoreText = renderScoreZone();
 
-  if (currentIndex > 1 && currentIndex < 7) {
-    $(`#scoreZone`).text(`Current Score: `+ correctAnswers + ` out of 5 ` );
-  }
 
-  if(currentIndex === 1) {
-    $(`#scoreZone`).text(`Current Score: `);
-  }
 
+
+
+  $(`#questionheading`).text(heading)
+  $(`#scoreZone`).text(scoreText);
   $('#questiontext').text(text);
-  
-  if (currentIndex > 5) {
-    $('#questionform').html(correctAnswers + " out of 5<br>" + submitBtn);
-  } else {
-    $('#questionform').html(answers + submitBtn);
-  }
-  
+  $('#questionform').html(answers);
+  $('#questionform').append(submitBtn);
   $('.quizimg').html(image);
+  
   
   $('#js-start-btn').remove();
   currentIndex += 1
-  // console.log(answers);
 }
 
 // renders the next page
 function nextQuestion(){
   $('#questionform').submit(function(event){
     tallyCorrectAnswers();
+    // renderSubmitBtn();
     event.preventDefault();
     
     if (currentIndex === 1 || currentIndex > 6)
@@ -194,6 +223,7 @@ function nextQuestion(){
 // calls all of the main ones
 function main (){
   renderPage();
+  renderSubmitBtn();
   nextQuestion();
   // tallyCorrectAnswers();
 }
